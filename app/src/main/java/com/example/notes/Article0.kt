@@ -1,11 +1,11 @@
-package com.example.myapplication
+package com.example.notes
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
-class EmailActivity : AppCompatActivity() {
+class Article0 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_email)
+        setContentView(R.layout.activity_article0)
     }
 }
