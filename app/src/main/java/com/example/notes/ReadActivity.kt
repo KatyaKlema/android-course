@@ -8,7 +8,7 @@ class ReadActivity() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_read)
-        var b : Bundle? = intent.extras
+        var b: Bundle? = intent.extras
         val tv = findViewById<TextView>(R.id.textView) as TextView
         if (b != null) {
             tv.text = b.getString("key")
