@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 
 
-class MyAdapter(val articles: ArrayList<MainActivity.Article>, private val cellClickListener: CellClickListener) : RecyclerView.Adapter<MyAdapter.ArticleViewHolder>(){
+class MyAdapter(val articles: ArrayList<Article>, private val cellClickListener: CellClickListener) : RecyclerView.Adapter<MyAdapter.ArticleViewHolder>(){
     class ArticleViewHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
             val cv = itemView.findViewById<View>(R.id.cardView) as CardView
@@ -35,7 +35,7 @@ class MyAdapter(val articles: ArrayList<MainActivity.Article>, private val cellC
         articleViewHolder.date.text = articles[position].date
         articleViewHolder.photo.setImageResource(articles[position].photoId)
         articleViewHolder.cv.setOnClickListener {
-            cellClickListener.onCellClickListener(articles[position].activity)
+            cellClickListener.onCellClickListener(articles[position].text, ReadActivity())
         }
     }
 }
