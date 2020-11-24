@@ -13,9 +13,9 @@ class ArticleFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_article, container, false)
     }
 
-    fun displayDetails(text: String, photoId : Int) {
-        txvText.text = text
-        imgArticle.setImageResource(photoId)
+    fun displayDetails(articleId : Int) {
+        txvText.text = articles[articleId].text
+        imgArticle.setImageResource(articles[articleId].photoId)
     }
 
 }
