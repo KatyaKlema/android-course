@@ -43,7 +43,7 @@ class RecyclerAdapter(private val context: Context?, private var list: List<Arti
 
             itemView.setOnClickListener {
                 val myCommunicator = context as Communicator
-                myCommunicator.displayDetails(current.text, current.photoId)
+                myCommunicator.displayDetails(current.articleId)
             }
         }
     }
