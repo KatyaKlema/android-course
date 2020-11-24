@@ -1,5 +1,6 @@
 package com.example.notes
 
+import android.content.Context
 import java.util.*
 
 data class Article(

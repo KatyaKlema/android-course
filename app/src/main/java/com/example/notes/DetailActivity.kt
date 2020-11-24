@@ -10,15 +10,11 @@ class DetailActivity: AppCompatActivity() {
         setContentView(R.layout.activity_detail)
 
         // Retrieve data coming from MainActivity.java
-        val text = intent.getStringExtra("text")
-        val photoId = intent.getStringExtra("photoId")
-
+        val articleId = intent.getStringExtra("articleId")?.toInt()
         // Pass the data to FragmentB to display it
         val articleFragment = supportFragmentManager.findFragmentById(R.id.article_fragment) as ArticleFragment?
-        if (text != null) {
-            if (photoId != null) {
-                articleFragment?.displayDetails(text, photoId.toInt())
-            }
+        if (articleId != null) {
+            articleFragment?.displayDetails(articleId)
         }
     }
 }

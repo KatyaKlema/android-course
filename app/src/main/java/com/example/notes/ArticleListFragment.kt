@@ -22,7 +22,7 @@ class ArticleListFragment: Fragment(){
 
         val recyclerView = rootView.findViewById(R.id.recycler_view) as RecyclerView
 
-        val adapter = RecyclerAdapter(context, DataProvider.data)
+        val adapter = RecyclerAdapter(context, articles)
         recyclerView.adapter = adapter
 
         val manager = LinearLayoutManager(activity)
