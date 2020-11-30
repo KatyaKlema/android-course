@@ -1,13 +1,14 @@
 package com.example.notes
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-var articles : List<Article> = emptyList()
+import androidx.fragment.app.FragmentManager
+
+var articles: List<Article> = emptyList()
 
 fun logCursor(c: Cursor?) {
     if (c != null) {
@@ -23,10 +24,16 @@ fun logCursor(c: Cursor?) {
         }
     } else Log.d(LOG_TAG, "Cursor is null")
 }
+
 val LOG_TAG = "-----------LOGS"
 
-class MainActivity : AppCompatActivity(),  Communicator {
-    private var mIsDualPane = false;
+class MainActivity : AppCompatActivity(), Communicator {
+    companion object {
+        private const val DETAIL_ARTICLE_BACK_STACK_NAME = "detail"
+    }
+
+    private var detailArticleFrameLayoutId = R.id.content_frame_layout
+
     @SuppressLint("WrongConstant")
     override fun onCreate(savedInstanceState: Bundle?) {
         // init our database
@@ -41,31 +48,39 @@ class MainActivity : AppCompatActivity(),  Communicator {
 //        var articles = dbHelper.getAllArticles()
 //        Log.println(10, null, "!!!!!!!!" + articles.toString())
 //        logCursor(articles)
-        for(article in articles){
+        for (article in articles) {
             Log.println(10, null, "article - " + article)
         }
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        // If FragmentB is present in activity_main.xml, then we are in Tablet
-        // Else the app is running in handset
-        val fragmentBView = findViewById<View>(R.id.article_fragment)
-        mIsDualPane = fragmentBView?.visibility == View.VISIBLE
 
+        if (savedInstanceState == null) {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.content_frame_layout, ArticleListFragment())
+                .commit()
+        }
 
+        if (findViewById<View>(R.id.sub_content_frame_layout) != null) {
+            detailArticleFrameLayoutId = R.id.sub_content_frame_layout
+        }
     }
 
     override fun displayDetails(articleId: Int) {
-        if(mIsDualPane){
-            // If we are in Tablet
-            val articleFragment = supportFragmentManager.findFragmentById(R.id.article_fragment) as ArticleFragment?
-            articleFragment?.displayDetails(articleId)
+        if (supportFragmentManager.findFragmentByTag(ArticleFragment.TAG) != null) {
+            supportFragmentManager
+                .popBackStack(DETAIL_ARTICLE_BACK_STACK_NAME, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
-        else{
-            // When we are in Smart phone
-            val intent = Intent(this, DetailActivity::class.java)
-            intent.putExtra("articleId", articleId.toString())
-            startActivity(intent)
-        }
+
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                detailArticleFrameLayoutId,
+                ArticleFragment.newInstance(articleId),
+                ArticleFragment.TAG
+            )
+            .addToBackStack(DETAIL_ARTICLE_BACK_STACK_NAME)
+            .commit()
     }
 }
