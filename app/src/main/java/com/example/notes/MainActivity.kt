@@ -8,8 +8,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 
-var articles: List<Article> = emptyList()
-
 fun logCursor(c: Cursor?) {
     if (c != null) {
         if (c.moveToFirst()) {
@@ -30,24 +28,23 @@ val LOG_TAG = "-----------LOGS"
 class MainActivity : AppCompatActivity(), Communicator {
     companion object {
         private const val DETAIL_ARTICLE_BACK_STACK_NAME = "detail"
+        lateinit var articlesStorage: ArticlesStorage
     }
 
-    private var detailArticleFrameLayoutId = R.id.content_frame_layout
+    var detailArticleFrameLayoutId = R.id.content_frame_layout
 
     @SuppressLint("WrongConstant")
     override fun onCreate(savedInstanceState: Bundle?) {
         // init our database
-        val dbHelper = DBHelper(this, null)
-        dbHelper.clearAllArticles()
-        dbHelper.addArticles(DataProvider.data)
+        var dbHelper : DBHelper = DBHelper(this, null)
 
         // create articleStorage
-        var articlesStorage = ArticlesStorage(dbHelper)
-        articlesStorage.init()
-        articles = articlesStorage.articles
+        articlesStorage = ArticlesStorage(DatabaseHolder(dbHelper))
 //        var articles = dbHelper.getAllArticles()
 //        Log.println(10, null, "!!!!!!!!" + articles.toString())
 //        logCursor(articles)
+
+        var articles = articlesStorage.getAllArticles()
         for (article in articles) {
             Log.println(10, null, "article - " + article)
         }

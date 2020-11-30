@@ -50,8 +50,8 @@ class DBHelper(context: Context,
         }
     }
     companion object {
-        private val DATABASE_VERSION = 1
-        private val DATABASE_NAME = "articles_table.db"
+        val DATABASE_VERSION = 1
+        val DATABASE_NAME = "articles_table.db"
         val TABLE_NAME = "articles"
         val COLUMN_ID = "_id"
         val COLUMN_TITLE = "article_title"

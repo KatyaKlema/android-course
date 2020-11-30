@@ -21,8 +21,7 @@ class ArticleListFragment: Fragment(){
     private fun setupRecyclerView(rootView: View) {
 
         val recyclerView = rootView.findViewById(R.id.recycler_view) as RecyclerView
-
-        val adapter = RecyclerAdapter(context, articles)
+        val adapter = MainActivity.articlesStorage.getAllArticles().let { RecyclerAdapter(context, it) }
         recyclerView.adapter = adapter
 
         val manager = LinearLayoutManager(activity)

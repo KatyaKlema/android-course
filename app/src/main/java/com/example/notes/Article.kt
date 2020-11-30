@@ -1,15 +1,15 @@
 package com.example.notes
 
-import android.content.Context
 import java.util.*
 
 data class Article(
-    var text: String,
-    var title: String,
-    var date: String,
-    var photoId: Int,
-    var articleId: Int
-)
+    var text: String = "",
+    var title: String = "",
+    var date: String = "",
+    var photoId: Int = -1,
+    var articleId: Int = -1
+){
+}
 
 
 object DataProvider {

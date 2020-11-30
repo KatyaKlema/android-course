@@ -1,54 +1,41 @@
 package com.example.notes
 
-import android.content.Context
+import android.content.ContentValues
 import android.database.Cursor
-import android.util.Log
+import android.database.sqlite.SQLiteDatabase
+import android.provider.ContactsContract
+import androidx.core.content.contentValuesOf
 
 fun convertCursorToArticleList(c: Cursor?) : List<Article> {
     var articles: MutableList<Article> = mutableListOf()
-    if (c != null) {
-        if (c.moveToFirst()) {
-            var articleTitle: String = ""
-            var articleText: String = ""
-            var articleId: Int = -1
-            var articlePhotoId: Int = -1
-            var articleDate: String = ""
-            do {
-                for (cn in c.getColumnNames()) {
-                    if(cn == "_id"){
-                        articleId = c.getString(c.getColumnIndex(cn)).toInt()
-                    }
-                    else if(cn == "article_title"){
-                        articleTitle = c.getString(c.getColumnIndex(cn))
-                    }
-                    else if(cn == "article_text"){
-                        articleText = c.getString(c.getColumnIndex(cn))
-                    }
-                    else if(cn == "article_date"){
-                        articleDate = c.getString(c.getColumnIndex(cn))
-                    }
-                    else if(cn == "article_photo_id"){
-                        articlePhotoId = c.getString(c.getColumnIndex(cn)).toInt()
-                    }
-                    if(articleId != -1 && articleTitle != "" && articleText != "" && articleDate != "" && articlePhotoId != -1){
-                        articles.add(Article(articleText, articleTitle, articleDate, articlePhotoId, articleId))
-                        articleTitle = ""
-                        articleText = ""
-                        articleId = -1
-                        articlePhotoId = -1
-                        articleDate = ""
-                    }
-                }
-
-            } while (c.moveToNext())
+    try{
+        if (c != null) {
+            while (c.moveToNext()) {
+                var articleTitle: String = c.getString(c.getColumnIndex(DBHelper.COLUMN_TITLE))
+                var articleText: String = c.getString(c.getColumnIndex(DBHelper.COLUMN_TEXT))
+                var articleId: Int = c.getInt(c.getColumnIndex(DBHelper.COLUMN_ID))
+                var articlePhotoId: Int = c.getInt(c.getColumnIndex(DBHelper.COLUMN_PHOTO_ID))
+                var articleDate: String = c.getString(c.getColumnIndex(DBHelper.COLUMN_DATE))
+                var article = Article(articleText, articleTitle, articleDate, articlePhotoId, articleId)
+                articles.add(article)
+            }
         }
+
+    } finally {
+        c?.close()
     }
+
     return articles.toList()
 }
-class ArticlesStorage(var dbHelper : DBHelper){
-    lateinit var articles: List<Article>
-    fun init(){
-        var article_cursor = dbHelper.getAllArticles()
-        articles = convertCursorToArticleList(article_cursor)
+class ArticlesStorage(var databaseHolder: DatabaseHolder){
+    fun getAllArticles(): List<Article> {
+        var article_cursor = databaseHolder.dbHelper.getAllArticles()
+        var articles: List<Article>
+        try {
+            articles = convertCursorToArticleList(article_cursor)
+        } finally {
+            article_cursor?.close()
+        }
+        return articles
     }
 }

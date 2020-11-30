@@ -36,7 +36,7 @@ class ArticleFragment : Fragment() {
     }
 
     private fun displayDetails(articleId : Int) {
-        txvText.text = articles[articleId].text
-        imgArticle.setImageResource(articles[articleId].photoId)
+        txvText.text = MainActivity.articlesStorage.getAllArticles()[articleId].text
+        imgArticle.setImageResource(MainActivity.articlesStorage.getAllArticles()[articleId].photoId)
     }
 }
