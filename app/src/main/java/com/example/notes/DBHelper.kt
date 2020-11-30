@@ -40,6 +40,11 @@ class DBHelper(context: Context,
         val db = this.readableDatabase
         return db.rawQuery("SELECT * FROM $TABLE_NAME", null)
     }
+    fun getArticleById(articleId: Int): Cursor? {
+        val db = this.readableDatabase
+        return db.rawQuery("SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = " + articleId.toString(),
+            null)
+    }
     fun clearAllArticles(){
         val db = this.writableDatabase
         db.execSQL("delete from "+ TABLE_NAME);

@@ -38,4 +38,14 @@ class ArticlesStorage(var databaseHolder: DatabaseHolder){
         }
         return articles
     }
+    fun getArticleById(articleId: Int): Article{
+        var article_cursor = databaseHolder.dbHelper.getArticleById(articleId)
+        var article: Article
+        try {
+            article = convertCursorToArticleList(article_cursor)[0]
+        } finally {
+            article_cursor?.close()
+        }
+        return article
+    }
 }
