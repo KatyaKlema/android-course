@@ -1,56 +1,83 @@
 package com.example.notes
 
-import android.content.Intent
+import android.annotation.SuppressLint
+import android.database.Cursor
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.FragmentManager
 
-interface CellClickListener {
-    fun onCellClickListener(articleText: String, activity: AppCompatActivity)
+fun logCursor(c: Cursor?) {
+    if (c != null) {
+        if (c.moveToFirst()) {
+            var str: String
+            do {
+                str = ""
+                for (cn in c.getColumnNames()) {
+                    str = str + cn + " = " + c.getString(c.getColumnIndex(cn)) + "; "
+                }
+                Log.d(LOG_TAG, str)
+            } while (c.moveToNext())
+        }
+    } else Log.d(LOG_TAG, "Cursor is null")
 }
 
-class MainActivity : AppCompatActivity(), CellClickListener {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val articles = ArrayList<Article>()
-        articles.add(
-            Article(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                "09.12.2018",
-                R.drawable.dreem,
-                0
-            )
-        )
-        articles.add(
-            Article(
-                "Implement this interface in activity or fragment wherever you wish to pass control. In this example this interface is implemented in MainActivity. Pass the reference of activity or fragment that implements CellClickListener to adapter like the line highlighted below is passing reference of activity in Adapter.",
-                "24.07.2010",
-                R.drawable.dreem,
-                1
-            )
-        )
-        articles.add(
-            Article(
-                "Recycler view uses several components to display data in a list format. The parent component is RecyclerView and it is implemented in activity or fragment. A recycler view is filled by views provided by LayoutManager (LinearLayoutManager or GridLayoutManager). A view is represented by view holder objects, data for each cell is set in view holder. We can access a view holder object in Adapter class. …",
-                "12.11.2011",
-                R.drawable.dreem,
-                2
-            )
-        )
+val LOG_TAG = "-----------LOGS"
 
-        val rv = findViewById<RecyclerView>(R.id.rv)
-        rv.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        val adapter = MyAdapter(articles, this)
-        rv.adapter = adapter
+class MainActivity : AppCompatActivity(), Communicator {
+    companion object {
+        private const val DETAIL_ARTICLE_BACK_STACK_NAME = "detail"
+        lateinit var articlesStorage: ArticlesStorage
     }
 
-    override fun onCellClickListener(articleText: String, activity: AppCompatActivity) {
-        val intent = Intent(this, activity::class.java)
-        val b = Bundle()
-        b.putString("key", articleText)
-        intent.putExtras(b)
-        startActivity(intent)
+    var detailArticleFrameLayoutId = R.id.content_frame_layout
+
+    @SuppressLint("WrongConstant")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // init our database
+        var dbHelper : DBHelper = DBHelper(this, null)
+
+        // create articleStorage
+        articlesStorage = ArticlesStorage(DatabaseHolder(dbHelper))
+//        var articles = dbHelper.getAllArticles()
+//        Log.println(10, null, "!!!!!!!!" + articles.toString())
+//        logCursor(articles)
+
+        var articles = articlesStorage.getAllArticles()
+        for (article in articles) {
+            Log.println(10, null, "article - " + article)
+        }
+
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        if (savedInstanceState == null) {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.content_frame_layout, ArticleListFragment())
+                .commit()
+        }
+
+        if (findViewById<View>(R.id.sub_content_frame_layout) != null) {
+            detailArticleFrameLayoutId = R.id.sub_content_frame_layout
+        }
+    }
+
+    override fun displayDetails(articleId: Int) {
+        if (supportFragmentManager.findFragmentByTag(ArticleFragment.TAG) != null) {
+            supportFragmentManager
+                .popBackStack(DETAIL_ARTICLE_BACK_STACK_NAME, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        }
+
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                detailArticleFrameLayoutId,
+                ArticleFragment.newInstance(articleId),
+                ArticleFragment.TAG
+            )
+            .addToBackStack(DETAIL_ARTICLE_BACK_STACK_NAME)
+            .commit()
     }
 }
