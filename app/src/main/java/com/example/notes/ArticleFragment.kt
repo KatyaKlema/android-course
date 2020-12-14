@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_article.*
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
 
 class ArticleFragment : Fragment() {
 
@@ -36,7 +38,9 @@ class ArticleFragment : Fragment() {
     }
 
     private fun displayDetails(articleId : Int) {
-        txvText.text = MainActivity.articlesStorage.getArticleById(articleId).text
-        imgArticle.setImageResource(MainActivity.articlesStorage.getArticleById(articleId).photoId)
+        viewLifecycleOwner.lifecycleScope.launch() {
+            txvText.text = MainActivity.articlesStorage.getArticleById(articleId).text
+            imgArticle.setImageResource(MainActivity.articlesStorage.getArticleById(articleId).photoId)
+        }
     }
 }

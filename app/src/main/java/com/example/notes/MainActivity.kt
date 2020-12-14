@@ -7,6 +7,12 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.launch
 
 fun logCursor(c: Cursor?) {
     if (c != null) {
@@ -37,7 +43,6 @@ class MainActivity : AppCompatActivity(), Communicator {
     override fun onCreate(savedInstanceState: Bundle?) {
         // init our database
         var dbHelper : DBHelper = DBHelper(this, null)
-
         // create articleStorage
         articlesStorage = ArticlesStorage(DatabaseHolder(dbHelper))
 //        var articles = dbHelper.getAllArticles()
