@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.provider.ContactsContract
 import androidx.core.content.contentValuesOf
+import kotlinx.coroutines.*
 
 fun convertCursorToArticleList(c: Cursor?) : List<Article> {
     var articles: MutableList<Article> = mutableListOf()
@@ -28,7 +29,7 @@ fun convertCursorToArticleList(c: Cursor?) : List<Article> {
     return articles.toList()
 }
 class ArticlesStorage(var databaseHolder: DatabaseHolder){
-    fun getAllArticles(): List<Article> {
+    suspend fun getAllArticles(): List<Article> = withContext(Dispatchers.IO) {
         var article_cursor = databaseHolder.dbHelper.getAllArticles()
         var articles: List<Article>
         try {
@@ -36,9 +37,9 @@ class ArticlesStorage(var databaseHolder: DatabaseHolder){
         } finally {
             article_cursor?.close()
         }
-        return articles
+        return@withContext articles
     }
-    fun getArticleById(articleId: Int): Article{
+    suspend fun getArticleById(articleId: Int): Article = withContext(Dispatchers.IO){
         var article_cursor = databaseHolder.dbHelper.getArticleById(articleId)
         var article: Article
         try {
@@ -46,6 +47,6 @@ class ArticlesStorage(var databaseHolder: DatabaseHolder){
         } finally {
             article_cursor?.close()
         }
-        return article
+        return@withContext article
     }
 }
