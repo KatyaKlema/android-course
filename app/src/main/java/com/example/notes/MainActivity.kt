@@ -49,9 +49,11 @@ class MainActivity : AppCompatActivity(), Communicator {
 //        Log.println(10, null, "!!!!!!!!" + articles.toString())
 //        logCursor(articles)
 
-        var articles = articlesStorage.getAllArticles()
-        for (article in articles) {
-            Log.println(10, null, "article - " + article)
+        GlobalScope.launch(Dispatchers.IO) {
+            var articles = articlesStorage.getAllArticles()
+            for (article in articles) {
+                Log.println(10, null, "article - " + article)
+            }
         }
 
         super.onCreate(savedInstanceState)
